@@ -1,0 +1,60 @@
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+</head>
+
+<script>
+    client = new Paho.MQTT.Client("mqtt.eclipseprojects.io/mqtt", 443, "hey");
+	// set callback handlers
+	client.onConnectionLost = onConnectionLost;
+	client.onMessageArrived = onMessageArrived;
+
+	// connect the client
+	client.connect({onSuccess:onConnect, useSSL: true});
+	
+
+	// called when the client connects
+	async function onConnect() {
+		// Once a connection has been made, make a subscription and send a message.
+		console.log("onConnect");
+		await client.subscribe("676Foot/pong")
+
+		ping();
+	}
+
+	// called when the client loses its connection
+	
+	function onConnectionLost(responseObject) {
+		if (responseObject.errorCode !== 0) {
+			console.log("onConnectionLost:"+responseObject.errorMessage);
+
+		}
+
+		// client.connect({onSuccess:onConnect});
+	}
+
+	function ping() {
+		console.log("pinging")
+		message = new Paho.MQTT.Message("x");
+		message.destinationName = "676Foot/ping";
+		client.send(message);
+		
+	}  
+
+	// called when a message arrives
+	function onMessageArrived(message) {
+		console.log("onMessageArrived:"+message.payloadString);
+
+		if (message.payloadString == "false") {
+			document.getElementById("status").innerHTML = "No"
+		} else {
+            document.getElementById("status").innerHTML = "Yes"
+        }
+	}
+</script>
+
+<body>
+    <h1>Am I home?</h1>
+    <h3 id="status"></h3>
+
+</body>
