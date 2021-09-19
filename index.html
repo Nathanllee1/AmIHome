@@ -42,19 +42,103 @@
 	}  
 
 	// called when a message arrives
-	function onMessageArrived(message) {
-		console.log("onMessageArrived:"+message.payloadString);
+	function onMessageArrived(message_obj) {
+		console.log("onMessageArrived:"+message_obj.payloadString);
 
-		if (message.payloadString == "false") {
-			document.getElementById("status").innerHTML = "No"
+		let message = JSON.parse(message_obj.payloadString);
+		
+		console.log(message)
+
+		if (message['Nathan']) {
+			document.getElementById("nathan_status").innerHTML = "✅"
 		} else {
-            document.getElementById("status").innerHTML = "Yes"
+            document.getElementById("nathan_status").innerHTML = "❌"
+        }
+
+		if (message['Elijah']) {
+			document.getElementById("elijah_status").innerHTML = "✅"
+		} else {
+            document.getElementById("elijah_status").innerHTML = "❌"
+        }
+
+		if (message['Dominic']) {
+			document.getElementById("dominic_status").innerHTML = "✅"
+		} else {
+            document.getElementById("dominic_status").innerHTML = "❌"
         }
 	}
 </script>
 
 <body>
-    <h1>Am I home?</h1>
-    <h3 id="status"></h3>
+    <h1 class="typewriter">Are we home? 🏠</h1>
+	<table>
+		<tr class="status_line">
+			<td class="status">Nathan</td> 
+			<td class="status" id="nathan_status">
+				<img src="loader.gif" style="width:15px">
+			</td>
+		</tr>
+	
+		<tr class="status_line">
+			<td class="status">Dominic</td> 
+			<td class="status" id="dominic_status">
+				<img src="loader.gif" style="width:15px">
+			</td>
+		</tr>
+	
+	
+		<tr class="status_line">
+			<td class="status">Elijah</td> 
+			<td class="status" id="elijah_status">
+				<img src="loader.gif" style="width:15px">
+			</td>
+		</tr>
+	</table>
+	
+    
+	<h3 id="elijah_status"></h3>
+	<h3 id="dominic_status"></h3>
 
 </body>
+
+<style>
+    body {
+        font-family: 'Source Code Pro';
+		text-align: center;
+		padding: 20%;
+    }
+	
+	table {
+		margin-left: auto;
+ 		margin-right: auto;
+	}
+
+	td {
+		padding: 13px;
+		width: 40px;
+	}
+
+
+	.typewriter h1 {
+		overflow: hidden; /* Ensures the content is not revealed until the animation */
+		border-right: .15em solid orange; /* The typwriter cursor */
+		white-space: nowrap; /* Keeps the content on a single line */
+		margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+		letter-spacing: .15em; /* Adjust as needed */
+		animation: 
+			typing 3.5s steps(40, end),
+			blink-caret .75s step-end infinite;
+	}
+
+	/* The typing effect */
+	@keyframes typing {
+		from { width: 0 }
+		to { width: 100% }
+	}
+
+	/* The typewriter cursor effect */
+	@keyframes blink-caret {
+		from, to { border-color: transparent }
+		50% { border-color: orange; }
+	}
+</style>
