@@ -57,13 +57,13 @@
 
 		const table_head = document.getElementById("status_table");
 		removeAllChildNodes(table_head);
-		// const key_list = Object.keys(message).sort();
+		const key_list = Object.keys(message).sort();
 
 		for (i=0; i<key_list.length; i++ ) {
 			const stat = document.createElement("tr");
 			
 			const name = document.createElement("td");
-			name.textContent = Object.keys(message)[i]
+			name.textContent = key_list[i]
 
 			const status = document.createElement("td");
 			if (message[key_list[i]] == 1) {
