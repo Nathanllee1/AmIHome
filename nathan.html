@@ -1,0 +1,116 @@
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+</head>
+
+<script>
+    client = new Paho.MQTT.Client("mqtt.eclipseprojects.io/mqtt", 443, "hey");
+	// set callback handlers
+	client.onConnectionLost = onConnectionLost;
+	client.onMessageArrived = onMessageArrived;
+
+	// connect the client
+	client.connect({onSuccess:onConnect, useSSL: true});
+	
+
+	// called when the client connects
+	async function onConnect() {
+		// Once a connection has been made, make a subscription and send a message.
+		console.log("onConnect");
+		await client.subscribe("676Foot/status")
+
+		ping();
+	}
+
+	// called when the client loses its connection
+	
+	function onConnectionLost(responseObject) {
+		if (responseObject.errorCode !== 0) {
+			console.log("onConnectionLost:"+responseObject.errorMessage);
+			client.connect({onSuccess:onConnect, useSSL: true});
+		}
+
+		// client.connect({onSuccess:onConnect});
+	}
+
+	function ping() {
+		console.log("pinging")
+		message = new Paho.MQTT.Message("x");
+		message.destinationName = "676Foot/ping";
+		client.send(message);
+		
+	}  
+
+	function removeAllChildNodes(parent) {
+		while (parent.firstChild) {
+			parent.removeChild(parent.firstChild);
+		}
+	}
+
+	// called when a message arrives
+	function onMessageArrived(message_obj) {
+		console.log("onMessageArrived:"+message_obj.payloadString);
+
+		let message = JSON.parse(message_obj.payloadString);
+		
+		console.log(message)
+
+		const table_head = document.getElementById("status_table");
+		removeAllChildNodes(table_head);
+		const key_list = Object.keys(message).sort();
+
+		for (i=0; i<key_list.length; i++ ) {
+			const stat = document.createElement("tr");
+			
+			const name = document.createElement("td");
+			name.textContent = key_list[i]
+
+			const status = document.createElement("td");
+			if (message[key_list[i]] == 1) {
+				status.innerText = "✅"
+			} else {
+				status.innerText = "❌"
+			}
+
+			stat.appendChild(name);
+			stat.appendChild(status);
+
+			table_head.appendChild(stat);
+		}
+	}
+</script>
+
+<body>
+    <h1>Are we home? 🏠</h1>
+	<table id="status_table">
+	</table>
+
+</body>
+
+<style>
+    body {
+        font-family: 'Source Code Pro';
+		text-align: center;
+		padding: 15%;
+    }
+
+	h1 {
+		font-size: 3vh
+	}
+	
+	table {
+		margin-left: auto;
+ 		margin-right: auto;
+	}
+
+	td {
+		padding: 13px;
+		width: 2vh;
+		font-size: 1.5vh;
+	}
+
+	img {
+		width: 2vh;
+	}
+
+</style>
